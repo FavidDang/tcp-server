@@ -8,13 +8,16 @@
 
 class SimpleSocket {
     struct sockaddr_in address;
+    socklen_t addrlen;
     int sock;
     int connection;
     public:
+        virtual int connectToNetwork(int sock, struct sockaddr * address) = 0;
         SimpleSocket(int domain, int service, int protocol, int port, u_long interface);
-        virtual int connectToNetwork(int sock, struct sockaddr_in address) = 0;
+        void init();
         void testSocket(int sock);
-        struct sockaddr_in getAddress();
+        struct sockaddr_in* getAddress();
+        socklen_t* getAddrlen();
         int getSock();
         int getConnection();
 };
