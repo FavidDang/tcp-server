@@ -19,7 +19,7 @@ void SimpleSocket::init() {
 
 void SimpleSocket::testSocket(int sock) {
     if (sock < 0) {
-        perror("Failed to connect");
+        perror("Error: ");
         exit(EXIT_FAILURE);
     }
 }

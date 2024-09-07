@@ -1,4 +1,5 @@
 #include "server_socket.hpp"
+#include <csignal>
 
 int main() {
     ServerSocket sock = ServerSocket(AF_INET, SOCK_STREAM, 0, PORT, INADDR_ANY);

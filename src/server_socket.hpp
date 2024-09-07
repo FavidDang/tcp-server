@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include "simple_socket.hpp"
 
@@ -12,6 +13,7 @@
 class ServerSocket: public SimpleSocket {
     public:
         ServerSocket(int domain, int service, int protocol, int port, u_long interface);
+        ~ServerSocket();
         int connectToNetwork(int sock, struct sockaddr * address) override;
         void acceptConnections();
 };
