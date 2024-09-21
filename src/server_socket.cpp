@@ -32,20 +32,21 @@ void ServerSocket::acceptConnections() {
         testSocket(new_socket);
         char buffer[30000] = {0};
         long valread = read( new_socket , buffer, 30000);
-        buffer[strlen(buffer) - 1] = 0; // sets last character '\n' to be null character
 
         std::cout << "Requested file: " << buffer << std::endl;
         int fd = open(buffer, O_RDONLY);
         if (fd < 0) {
             perror("Error");
+            strcpy(buffer, "Error: file not found.");
+            write(new_socket, buffer, strlen(buffer));
+        } else {
+            int bytesRead;
+            while ((bytesRead = read(fd, buffer, sizeof buffer)) > 0) {
+                write(new_socket, buffer, bytesRead);
+            }
+            close(fd);
+            close(new_socket);
         }
-
-        int bytesRead;
-        while ((bytesRead = read(fd, buffer, sizeof buffer)) > 0) {
-            write(new_socket, buffer, bytesRead);
-        }
-        close(fd);
         shutdown(new_socket, SHUT_WR);
-        close(new_socket);
     }
 }
