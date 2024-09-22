@@ -7,7 +7,7 @@
 #include <string.h>
 #include "simple_socket.hpp"
 
-#define MAX_REQUESTS 10
+#define MAX_REQUESTS 100
 #define PORT 8080
 
 class ServerSocket: public SimpleSocket {
@@ -15,7 +15,8 @@ class ServerSocket: public SimpleSocket {
         ServerSocket(int domain, int service, int protocol, int port, u_long interface);
         ~ServerSocket();
         int connectToNetwork(int sock, struct sockaddr * address) override;
-        void acceptConnections();
+        virtual void acceptConnections();
+        void handleRequest(int req_fd);
 };
 
 #endif

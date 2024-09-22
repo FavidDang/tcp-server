@@ -23,30 +23,42 @@ void ServerSocket::acceptConnections() {
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
     printf("Current working dir: %s\n", cwd);
-   int new_socket;
+    int new_socket;
     while(1) {
         std::cout << "+++++++ Waiting for new connection ++++++++" << std::endl;
 
         // waits for a new TCP request and tests for error
         new_socket = accept(getSock(), (struct sockaddr*) getAddress(), getAddrlen());
-        testSocket(new_socket);
-        char buffer[30000] = {0};
-        long valread = read( new_socket , buffer, 30000);
-
-        std::cout << "Requested file: " << buffer << std::endl;
-        int fd = open(buffer, O_RDONLY);
-        if (fd < 0) {
-            perror("Error");
-            strcpy(buffer, "Error: file not found.");
-            write(new_socket, buffer, strlen(buffer));
-        } else {
-            int bytesRead;
-            while ((bytesRead = read(fd, buffer, sizeof buffer)) > 0) {
-                write(new_socket, buffer, bytesRead);
-            }
-            close(fd);
+        
+        if (new_socket < 0) {
+            perror("Error: ");
             close(new_socket);
+            continue;
         }
-        shutdown(new_socket, SHUT_WR);
+        handleRequest(new_socket);
     }
+}
+
+void ServerSocket::handleRequest(int req_fd) {
+    char buffer[30000] = {0};
+    long valread = read( req_fd , buffer, 30000);
+
+    std::string file_name(buffer);
+
+    std::cout << "Requested file: " << buffer << std::endl;
+    int fd = open(buffer, O_RDONLY);
+    if (fd < 0) {
+        perror("Error");
+        strcpy(buffer, "Error: file not found.");
+        write(req_fd, buffer, strlen(buffer));
+    } else {
+        std::cout << "File found: " << buffer << std::endl;
+        int bytesRead;
+        while ((bytesRead = read(fd, buffer, sizeof buffer)) > 0) {
+            write(req_fd, buffer, bytesRead);
+        }
+        close(fd);
+    }
+    std::cout << "Response sent for: " << file_name << std::endl;
+    close(req_fd);
 }
