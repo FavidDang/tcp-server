@@ -40,8 +40,8 @@ void ServerSocket::acceptConnections() {
 }
 
 void ServerSocket::handleRequest(int req_fd) {
-    char buffer[30000] = {0};
-    long valread = read( req_fd , buffer, 30000);
+    char buffer[BUF_SIZE] = {0};
+    long valread = read( req_fd , buffer, BUF_SIZE);
 
     std::string file_name(buffer);
 
@@ -54,8 +54,24 @@ void ServerSocket::handleRequest(int req_fd) {
     } else {
         std::cout << "File found: " << buffer << std::endl;
         int bytesRead;
+        std::string data;
         while ((bytesRead = read(fd, buffer, sizeof buffer)) > 0) {
-            write(req_fd, buffer, bytesRead);
+            data.append(buffer, bytesRead);
+        }
+        sort(data.begin(), data.end());
+        ssize_t bytes_sent = 0;
+        ssize_t total_bytes_sent = 0;
+        size_t data_length = data.size();
+        
+        // Send data in a loop until the entire string is sent
+        while (total_bytes_sent < data_length) {
+            bytes_sent = send(req_fd, data.c_str() + total_bytes_sent, data_length - total_bytes_sent, 0);
+            
+            if (bytes_sent < 0) {
+                std::cerr << "Error while sending data!" << std::endl;
+                break;
+            }
+            total_bytes_sent += bytes_sent;
         }
         close(fd);
     }

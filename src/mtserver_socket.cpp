@@ -29,6 +29,7 @@ void MTServerSocket::acceptConnections() {
         if (err < 0) {
             perror("Error: ");
         } else {
+            std::cout << "spinning new thread" << std::endl;
             pthread_detach(thread);
         }
     }

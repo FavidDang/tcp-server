@@ -15,6 +15,7 @@ void SimpleSocket::init() {
     // Establish bind/connection
     connection = connectToNetwork(sock, (struct sockaddr *)&address);
     testSocket(connection);
+    chdir("tests");
 }
 
 void SimpleSocket::testSocket(int sock) {

@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++2a -pthread
+CXXFLAGS = -Wall -std=c++2a -pthread -fPIC
 
 # Directories
 SRC_DIR = src
