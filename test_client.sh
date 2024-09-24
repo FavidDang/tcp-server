@@ -45,7 +45,7 @@ for file in tests/*; do
     filename=$(basename "$file")
     send_request "$filename" &
     # Sleep for a little bit to avoid overwhelming the server
-    sleep 0.25 # Adjust the sleep time as necessary (0.5 seconds here)
+    # sleep 0.25 # Adjust the sleep time as necessary (0.5 seconds here)
 done
 
 # Wait for all background jobs to finish

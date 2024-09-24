@@ -22,10 +22,10 @@ void MTServerSocket::acceptConnections() {
             continue;
         }
         pthread_t thread;
-        pthread_args args;
-        args.server_ptr = this;
-        args.req_fd = new_socket;
-        int err = pthread_create(&thread, NULL, threadWrapper, &args);
+        pthread_args* args = new pthread_args;
+        args->server_ptr = this;
+        args->req_fd = new_socket;
+        int err = pthread_create(&thread, NULL, threadWrapper, args);
         if (err < 0) {
             perror("Error: ");
         } else {
@@ -40,4 +40,5 @@ void* MTServerSocket::threadWrapper(void* args) {
     pthread_args* args_ptr = static_cast<pthread_args*>(args);
     MTServerSocket* server_instance = args_ptr->server_ptr;
     server_instance->handleRequest(args_ptr->req_fd);
+    delete args_ptr;
 }
